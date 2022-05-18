@@ -81,6 +81,8 @@ ceph:
   conf: ""
   rbd_user: "cinder"
   keyring: null
+tls:
+  ca_bundle: ""
 
 pod:
   security_context:
@@ -426,6 +428,7 @@ manifests:
   nfs_pv: true
   nfs_pvc: true
   deployment_client: true
+  secret_ca_bundle: true
 
 network:
   wlm_api:

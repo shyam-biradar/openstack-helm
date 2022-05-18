@@ -34,6 +34,9 @@ NOVA_TRANSPORT_URL=$(kubectl -n openstack get secret nova-rabbitmq-user --templa
 
 kubectl -n openstack get secret/nova-etc -o "jsonpath={.data['nova-compute\.conf']}" | base64 -d > ../templates/bin/_triliovault-nova-compute.conf.tpl
 
+## TLS
+CA_BUNDLE=$(kubectl -n openstack get secrets/keystone-ca-bundle --template={{.data.ca_bundle}} | base64 -d)
+
 cd ../
 
 tee > values_overrides/admin_creds.yaml  << EOF
@@ -41,6 +44,8 @@ conf:
   datamover:
     DEFAULT:
       dmapi_transport_url: $NOVA_TRANSPORT_URL
+tls:
+  ca_bundle: $CA_BUNDLE
 endpoints:
   identity:
     name: keystone
