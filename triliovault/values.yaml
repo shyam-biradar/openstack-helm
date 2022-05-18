@@ -27,6 +27,9 @@ labels:
   wlm_workloads:
     node_selector_key: triliovault-control-plane
     node_selector_value: enabled
+  client:
+    node_selector_key: triliovault-control-plane
+    node_selector_value: enabled
   datamover_api:
     node_selector_key: triliovault-control-plane
     node_selector_value: enabled
@@ -190,6 +193,12 @@ pod:
       triliovault_wlm_db_sync:
         volumeMounts:
         volumes:
+    triliovault_client:
+      init_container: null
+      triliovault_client:
+        volumeMounts:
+        volumes:
+
   lifecycle:
     upgrades:
       deployments:
@@ -218,6 +227,10 @@ pod:
         timeout: 30
       wlm_workloads:
         timeout: 30
+      wlm_workloads:
+        timeout: 30
+      client:
+        timeout: 30
       datamover_api:
         timeout: 30
       datamover:
@@ -228,6 +241,7 @@ pod:
     triliovault_wlm_workloads: 3
     triliovault_wlm_cron: 1
     triliovault_wlm_scheduler: 1
+    client: 1
   resources:
     enabled: false
     wlm_api:
@@ -252,6 +266,13 @@ pod:
         memory: "1024Mi"
         cpu: "2000m"
     wlm_workloads:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "1024Mi"
+        cpu: "2000m"
+    client:
       requests:
         memory: "128Mi"
         cpu: "100m"
@@ -404,6 +425,7 @@ manifests:
   service_ingress_wlm_api: true
   nfs_pv: true
   nfs_pvc: true
+  deployment_client: true
 
 network:
   wlm_api:
@@ -1094,6 +1116,10 @@ dependencies:
         - triliovault-wlm-rabbit-init
         - triliovault-wlm-ks-endpoints
         - triliovault-wlm-ks-user
+      services:
+        - endpoint: internal
+          service: workloads
+    client:
       services:
         - endpoint: internal
           service: workloads
